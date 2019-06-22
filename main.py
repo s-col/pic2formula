@@ -31,7 +31,7 @@ def main():
         fname = os.path.basename(path)
         fname = os.path.splitext(fname)[0]
         dir_tex = os.path.join(dir_base, "tex")
-        if not os.path.exists(dir_base):
+        if not os.path.exists(dir_tex):
             os.mkdir(dir_tex)
         dir_name = os.path.join(dir_tex, fname)
         if not os.path.exists(dir_name):
