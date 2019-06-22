@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+# このファイルがあるディレクトリ
+dir_base = os.path.dirname(os.path.abspath(__file__))
 
 def main():
     args = get_args()
@@ -19,17 +21,18 @@ def main():
     fname = os.path.split(path)[-1]
     fname = os.path.splitext(fname)[0]
     fname += "_" + datetime.now().strftime(r"%Y%m%d%H%M%S")
-    dir = "./gif/"
-    if not os.path.isdir(dir):
-        os.mkdir(dir)
-    fname = "{}/{}.gif".format(dir, fname)
-    ani.save(fname, writer="imagemagick")
+    dir_gif = os.path.join(dir_base, "gif")
+    if not os.path.isdir(dir_gif):
+        os.mkdir(dir_gif)
+    fname += ".gif"
+    fpath = os.path.join(dir_gif, fname)
+    ani.save(fpath, writer="imagemagick")
 
 
 def get_args():
     parser = ArgumentParser()
     parser.add_argument("path", type=str,
-                        help="path to .dump")
+                        help="path to picf-file")
     args = parser.parse_args()
     return args
 

@@ -4,6 +4,8 @@ from argparse import ArgumentParser
 
 import pic2formula
 
+# このファイルがあるディレクトリ
+dir_base = os.path.dirname(os.path.abspath(__file__))
 
 def main():
     args = get_args()
@@ -17,30 +19,42 @@ def main():
     desmos_flag = args.desmos
     tex_showmax = args.showmax
 
+    # 画像を数式に変換
     x_picf, y_picf = pic2formula.generate(path, n=n, e=e, k=k, ml=ml)
+
+    # 係数を小数から分数に変換
     x_picff = x_picf.fraction(maxd)
     y_picff = y_picf.fraction(maxd)
 
+    # texファイルを生成
     if generate_tex_flag:
         fname = os.path.basename(path)
         fname = os.path.splitext(fname)[0]
-        dir_name = "./tex/{}".format(fname)
-        if not os.path.isdir(dir_name):
+        dir_tex = os.path.join(dir_base, "tex")
+        if not os.path.exists(dir_base):
+            os.mkdir(dir_tex)
+        dir_name = os.path.join(dir_tex, fname)
+        if not os.path.exists(dir_name):
             os.mkdir(dir_name)
         fname += ".tex"
         fpath = os.path.join(dir_name, fname)
         generate_tex(fpath, x_picff, y_picff, showmax=tex_showmax)
     
+    # desmos用のテキストファイルを生成
     if desmos_flag:
         fname = os.path.basename(path)
-        fname = os.path.splitext(fname)[0] + ".txt"
-        dir_name = "./desmos"
+        fname = os.path.splitext(fname)[0]
+        dir_desmos = os.path.join(dir_base, "desmos")
+        if not os.path.exists(dir_desmos):
+            os.mkdir(dir_desmos)
+        fname += ".txt"
         fpath = os.path.join(dir_name, fname)
         generate_desmos(fpath, x_picff, y_picff)
 
+    # 画像から生成した数式をプロット
     pic2formula.plot_pf(x_picff, y_picff, n=5000, show=True)
 
-    # 保存
+    # x_picff, y_picffを保存
     dic = {"y": True, "yes": True, "n": False, "no": False, "":False}
     while True:
         inp = input("save?[y/N] ").lower()
@@ -49,13 +63,14 @@ def main():
             break
         print("Error! Input again.")
     if inp:
-        fname = os.path.split(path)[-1]
+        fname = os.path.basename(path)
         fname = os.path.splitext(fname)[0]
-        dir = "./picf/"
-        if not os.path.isdir(dir):
-            os.mkdir(dir)
-        fname = "{}/{}.dump".format(dir, fname)
-        with open(fname, "wb") as f:
+        dir_name = os.path.join(dir_base, "picf")
+        if not os.path.exists(dir_name):
+            os.mkdir(dir_name)
+        fname += ".picf"
+        fpath = os.path.join(dir_name, fname)
+        with open(fpath, "wb") as f:
             pickle.dump([x_picff, y_picff], f)
 
 
