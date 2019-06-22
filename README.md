@@ -4,6 +4,14 @@
 
 ![demo.png](https://github.com/s-col/pic2formula/blob/fig_for_Readme/demo.png)
 
+## 必要なライブラリ
+
+* numpy
+* matplotlib
+* scipy
+* numba
+* opencv
+
 ## 使い方(クイックガイド)
 
 1. 次のコマンドを実行：
